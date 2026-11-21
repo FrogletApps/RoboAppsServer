@@ -38,7 +38,7 @@ npm run dev:cf
 
 ## Deploying to Cloudflare Workers
 
-Configured in `wrangler.toml` with path-based API routes (`test.roboref.app/api/*` and `roboref.app/api/*`):
+Configured in `wrangler.toml` with path-based API routes (`test.roboref.app/api/*`, `test.robovolunteers.link/api/*`, `roboref.app/api/*`, and `robovolunteers.link/api/*`):
 
 ```bash
 # Deploy to Test environment (roboapps-server-test)

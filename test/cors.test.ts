@@ -19,10 +19,13 @@ class DummyStorageAdapter implements StorageAdapter {
 
 describe("CORS Security Middleware & Origin Validation", () => {
   describe("isAllowedOrigin unit tests", () => {
-    it("allows official RoboRef domains", () => {
+    it("allows official RoboRef and Volunteer Hub domains", () => {
       assert.strictEqual(isAllowedOrigin("https://roboref.app"), true);
       assert.strictEqual(isAllowedOrigin("https://test.roboref.app"), true);
       assert.strictEqual(isAllowedOrigin("https://staging.roboref.app:8443"), true);
+      assert.strictEqual(isAllowedOrigin("https://robovolunteers.link"), true);
+      assert.strictEqual(isAllowedOrigin("https://test.robovolunteers.link"), true);
+      assert.strictEqual(isAllowedOrigin("https://staging.robovolunteers.link:8443"), true);
       assert.strictEqual(isAllowedOrigin("https://roboref-volunteer-hub.james-pearson.workers.dev"), true);
     });
 
@@ -58,6 +61,7 @@ describe("CORS Security Middleware & Origin Validation", () => {
     it("rejects unauthorized external domains", () => {
       assert.strictEqual(isAllowedOrigin("https://evil.com"), false);
       assert.strictEqual(isAllowedOrigin("https://roboref.app.evil.com"), false);
+      assert.strictEqual(isAllowedOrigin("https://robovolunteers.link.evil.com"), false);
       assert.strictEqual(isAllowedOrigin("http://8.8.8.8:8080"), false);
       assert.strictEqual(isAllowedOrigin("http://172.32.0.1"), false);
       assert.strictEqual(isAllowedOrigin(""), false);
@@ -73,6 +77,16 @@ describe("CORS Security Middleware & Origin Validation", () => {
 
       assert.strictEqual(res.status, 200);
       assert.strictEqual(res.headers.get("Access-Control-Allow-Origin"), "https://roboref.app");
+    });
+
+    it("returns Access-Control-Allow-Origin for robovolunteers.link origin", async () => {
+      const app = createSyncApp(new DummyStorageAdapter());
+      const res = await app.request("/api/health", {
+        headers: { Origin: "https://robovolunteers.link" },
+      });
+
+      assert.strictEqual(res.status, 200);
+      assert.strictEqual(res.headers.get("Access-Control-Allow-Origin"), "https://robovolunteers.link");
     });
 
     it("returns Access-Control-Allow-Origin for Volunteer Hub worker origin", async () => {
