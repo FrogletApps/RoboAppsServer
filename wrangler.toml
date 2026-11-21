@@ -1,0 +1,63 @@
+#:schema node_modules/wrangler/config-schema.json
+name = "roboapps-server-test"
+main = "src/index.cf.ts"
+compatibility_date = "2026-08-24"
+compatibility_flags = ["nodejs_compat"]
+
+# Default (Test) Environment Routes (Route A: API-only path routes on shared domains)
+routes = [
+  { pattern = "test.roboref.app/api/*", zone_name = "roboref.app" }
+]
+
+[vars]
+ENVIRONMENT = "test"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "roboref-test-db"
+database_id = "8bcc2138-47d7-4b1b-9f57-e668abe27b42"
+
+# Observability & Logging
+[observability]
+enabled = true
+
+[observability.logs]
+enabled = true
+
+# ----------------------------------------------------------------------
+# Test Environment
+# Deploy via: npx wrangler deploy --env test
+# ----------------------------------------------------------------------
+[env.test]
+name = "roboapps-server-test"
+workers_dev = true
+routes = [
+  { pattern = "test.roboref.app/api/*", zone_name = "roboref.app" }
+]
+
+[env.test.vars]
+ENVIRONMENT = "test"
+
+[[env.test.d1_databases]]
+binding = "DB"
+database_name = "roboref-test-db"
+database_id = "8bcc2138-47d7-4b1b-9f57-e668abe27b42"
+
+# ----------------------------------------------------------------------
+# Live / Production Environment
+# Deploy via: npx wrangler deploy --env live
+# ----------------------------------------------------------------------
+[env.live]
+name = "roboapps-server"
+workers_dev = false
+routes = [
+  { pattern = "roboref.app/api/*", zone_name = "roboref.app" }
+]
+
+[env.live.vars]
+ENVIRONMENT = "live"
+
+[[env.live.d1_databases]]
+binding = "DB"
+database_name = "roboref-db"
+database_id = "4cc2e2c6-eec4-4f55-bc95-481ca4d3c59e"

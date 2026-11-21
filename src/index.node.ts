@@ -13,8 +13,8 @@ await storage.init();
 
 const app = createSyncApp(storage);
 
-console.log(`[RoboRef Venue Server] Initialized with SQLite database: ${dbPath}`);
-console.log(`[RoboRef Venue Server] Listening on http://0.0.0.0:${port}`);
+console.log(`[RoboApps Venue Server] Initialized with SQLite database: ${dbPath}`);
+console.log(`[RoboApps Venue Server] Listening on http://0.0.0.0:${port}`);
 
 serve({
   fetch: app.fetch,

@@ -7,7 +7,8 @@ export interface Env {
   ENVIRONMENT: string;
   VEX_EVENTS_TOKEN?: string;
   VEX_API_KEY?: string;
-  ASSETS?: { fetch: typeof fetch };
+  ALLOWED_ORIGINS?: string;
+  CORS_ORIGIN?: string;
 }
 
 let cachedApp: ReturnType<typeof createSyncApp> | null = null;
@@ -28,11 +29,6 @@ export default {
       }
     }
 
-    const response = await cachedApp.fetch(request, env, ctx);
-    if (response.status === 404 && env.ASSETS) {
-      return env.ASSETS.fetch(request);
-    }
-    return response;
+    return cachedApp.fetch(request, env, ctx);
   },
 };
-
