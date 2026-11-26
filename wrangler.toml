@@ -61,6 +61,7 @@ routes = [
 
 [env.live.vars]
 ENVIRONMENT = "live"
+SERVER_NAME = "RoboApps Server"
 
 [[env.live.d1_databases]]
 binding = "DB"
