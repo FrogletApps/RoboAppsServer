@@ -1,11 +1,12 @@
 {
   "name": "roboapps-server",
-  "version": "1.0.0",
+  "version": "2026.11.26+1",
   "type": "module",
   "private": true,
   "description": "RoboApps Server - Universal sync and API server for RoboRef and RoboApps, deployable to Cloudflare Workers and Raspberry Pi",
   "main": "src/index.node.ts",
   "scripts": {
+    "bump": "node scripts/bump-version.mjs",
     "dev:cf": "wrangler dev",
     "dev:cf:live": "wrangler dev --env live",
     "deploy:cf:test": "wrangler deploy --env test",

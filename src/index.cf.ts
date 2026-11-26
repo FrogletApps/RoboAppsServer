@@ -5,6 +5,7 @@ import type { D1Database } from "@cloudflare/workers-types";
 export interface Env {
   DB: D1Database;
   ENVIRONMENT: string;
+  SERVER_NAME?: string;
   VEX_EVENTS_TOKEN?: string;
   VEX_API_KEY?: string;
   ALLOWED_ORIGINS?: string;

@@ -12,6 +12,7 @@ routes = [
 
 [vars]
 ENVIRONMENT = "test"
+SERVER_NAME = "RoboApps Server (Test)"
 
 [[d1_databases]]
 binding = "DB"
@@ -39,6 +40,7 @@ routes = [
 
 [env.test.vars]
 ENVIRONMENT = "test"
+SERVER_NAME = "RoboApps Server (Test)"
 
 [[env.test.d1_databases]]
 binding = "DB"

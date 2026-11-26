@@ -1,3 +1,15 @@
+export interface HealthResponse {
+  status: "ok";
+  server: string;
+  version: string;
+  timestamp: number;
+}
+
+export interface VersionResponse {
+  server: string;
+  version: string;
+}
+
 export interface EventRecord {
   sku: string;
   name: string;

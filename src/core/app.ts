@@ -1,12 +1,14 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { logger } from "hono/logger";
-import type { StorageAdapter, SyncPushPayload } from "./types.js";
+import type { HealthResponse, StorageAdapter, SyncPushPayload, VersionResponse } from "./types.js";
+import { resolveServerName, SERVER_VERSION } from "./version.js";
 
 export interface AppEnv {
   Bindings?: {
     DB?: any;
     ENVIRONMENT?: string;
+    SERVER_NAME?: string;
     VEX_EVENTS_TOKEN?: string;
     VEX_API_KEY?: string;
     ALLOWED_ORIGINS?: string;
@@ -95,6 +97,7 @@ export function createSyncApp(storageProvider: StorageAdapter) {
   app.use("*", async (c, next) => {
     await next();
     c.res.headers.set("Access-Control-Allow-Private-Network", "true");
+    c.res.headers.set("X-Server-Version", SERVER_VERSION);
   });
   app.use("*", (c, next) => {
     const corsHandler = cors({
@@ -109,6 +112,7 @@ export function createSyncApp(storageProvider: StorageAdapter) {
       },
       allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowHeaders: ["Content-Type", "Authorization", "X-Device-ID", "Cache-Control", "Pragma"],
+      exposeHeaders: ["X-Server-Version"],
     });
     return corsHandler(c, next);
   });
@@ -119,13 +123,32 @@ export function createSyncApp(storageProvider: StorageAdapter) {
     await next();
   });
 
+  function getServerName(env?: AppEnv["Bindings"]): string {
+    const envName =
+      env?.SERVER_NAME?.trim() ||
+      (typeof process !== "undefined" ? process.env?.SERVER_NAME?.trim() : undefined);
+    return resolveServerName(envName);
+  }
+
   // Health check & discovery endpoint (for mDNS / local LAN detection)
   app.get("/api/health", (c) => {
-    return c.json({
+    const payload: HealthResponse = {
       status: "ok",
-      server: "RoboApps Server",
+      server: getServerName(c.env),
+      version: SERVER_VERSION,
       timestamp: Date.now(),
-    });
+    };
+    return c.json(payload);
+  });
+
+  // Server version endpoint (readable by RoboRef and RoboVolunteers)
+  app.get("/api/version", (c) => {
+    c.header("Cache-Control", "no-store");
+    const payload: VersionResponse = {
+      server: getServerName(c.env),
+      version: SERVER_VERSION,
+    };
+    return c.json(payload);
   });
 
   // Proxy endpoint for VEX Events API v2

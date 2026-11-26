@@ -8,7 +8,8 @@ Universal sync and API server for **RoboRef** and the **RoboApps** ecosystem, bu
 - **Cloudflare Runtime** (`src/index.cf.ts`): Cloudflare Workers + Cloudflare D1 (`src/adapters/cloudflare-d1.ts`)
 - **Node.js / Venue Runtime** (`src/index.node.ts`): `@hono/node-server` + local SQLite (`src/adapters/local-sqlite.ts`), containerized via `Dockerfile.rpi`
 - **API Routes** (`src/core/app.ts`):
-  - `GET /api/health` — Server health check & LAN discovery
+  - `GET /api/health` — Server health check, name, version info, & LAN discovery
+  - `GET /api/version` — Server name and version info (`server`, `version`, using unpadded `vYYYY.M.D+N` format synced with `package.json` via `npm run bump`), also exposed on all responses via the `X-Server-Version` header; `server` defaults to `"RoboApps Server"` and can be overridden via the `SERVER_NAME` environment variable
   - `GET /api/vexevents/*` — Cached proxy for VEX Events API v2
   - `GET /api/sync/pull`, `POST /api/sync/push` — Delta incident note synchronization
   - `GET /api/share/*`, `POST /api/share/*` — Tournament share session management
@@ -34,6 +35,13 @@ npm run dev:cf
 # Typecheck, run tests, and compile Node.js bundle
 ./scripts/build.ps1   # Windows (PowerShell)
 ./scripts/build.sh    # Linux / macOS
+```
+
+### Bumping the Version
+```bash
+# Sets today's unpadded date (YYYY.M.D+1) or increments +N if already today
+# Updates package.json, package-lock.json, and src/core/version.ts together
+npm run bump
 ```
 
 ## Deploying to Cloudflare Workers
